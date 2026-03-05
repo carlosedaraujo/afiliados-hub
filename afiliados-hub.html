@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AfiliadosHub – Seus Links de Afiliado</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --card: #1a1a26;
+    --border: #2a2a3d;
+    --ml-yellow: #ffe000;
+    --ml-blue: #3483fa;
+    --shopee-orange: #ee4d2d;
+    --shopee-light: #ff7337;
+    --accent: #7c6bff;
+    --text: #f0f0f8;
+    --muted: #8888aa;
+    --success: #22dd88;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  /* HEADER */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    background: linear-gradient(135deg, var(--accent), var(--ml-yellow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .btn-add {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-add:hover { background: #9585ff; transform: translateY(-1px); }
+
+  /* MAIN LAYOUT */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 40px 0 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    letter-spacing: -1px;
+  }
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--shopee-orange), var(--ml-yellow), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* STATS */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 28px 0;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    display: block;
+  }
+  .stat-label { color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+  .stat-ml .stat-num { color: var(--ml-yellow); }
+  .stat-sh .stat-num { color: var(--shopee-orange); }
+  .stat-all .stat-num { color: var(--accent); }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 5px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s 0.15s ease both;
+  }
+  .tab {
+    flex: 1;
+    padding: 9px 0;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: #fff;
+    background: var(--card);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .tab.active.tab-all { background: var(--accent); }
+  .tab.active.tab-ml { background: var(--ml-blue); }
+  .tab.active.tab-sh { background: var(--shopee-orange); }
+
+  /* SEARCH BAR */
+  .search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+  .search-input {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.93rem;
+    outline: none;
+    transition: border 0.2s;
+  }
+  .search-input::placeholder { color: var(--muted); }
+  .search-input:focus { border-color: var(--accent); }
+
+  /* LINKS GRID */
+  .links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 14px;
+    animation: fadeUp 0.6s 0.25s ease both;
+  }
+
+  .link-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    cursor: default;
+    position: relative;
+  }
+  .link-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+  .link-card.ml { border-top: 3px solid var(--ml-yellow); }
+  .link-card.ml:hover { border-color: var(--ml-yellow); box-shadow: 0 12px 40px rgba(255,224,0,0.1); }
+  .link-card.sh { border-top: 3px solid var(--shopee-orange); }
+  .link-card.sh:hover { border-color: var(--shopee-orange); box-shadow: 0 12px 40px rgba(238,77,45,0.12); }
+
+  .card-body { padding: 16px; }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+
+  .platform-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.73rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+  }
+  .badge-ml { background: rgba(255,224,0,0.12); color: var(--ml-yellow); border: 1px solid rgba(255,224,0,0.25); }
+  .badge-sh { background: rgba(238,77,45,0.12); color: var(--shopee-light); border: 1px solid rgba(238,77,45,0.25); }
+
+  .card-actions { display: flex; gap: 6px; }
+  .btn-icon {
+    width: 30px; height: 30px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+    transition: all 0.15s;
+  }
+  .btn-icon:hover { color: var(--text); border-color: var(--accent); }
+  .btn-icon.delete:hover { color: #ff5555; border-color: #ff5555; }
+
+  .card-title {
+    font-weight: 600;
+    font-size: 0.97rem;
+    margin-bottom: 6px;
+    line-height: 1.35;
+  }
+
+  .card-url {
+    font-size: 0.78rem;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 10px;
+    padding: 6px 10px;
+    background: var(--surface);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .card-url:hover { border-color: var(--accent); }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--surface);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-copy {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  .btn-copy:hover { background: #9585ff; }
+  .btn-copy.copied { background: var(--success); }
+  .btn-copy.ml-copy { background: var(--ml-blue); }
+  .btn-copy.ml-copy:hover { background: #5299ff; }
+  .btn-copy.sh-copy { background: var(--shopee-orange); }
+  .btn-copy.sh-copy:hover { background: var(--shopee-light); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+  .empty-state p { margin-top: 6px; font-size: 0.93rem; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 28px;
+    width: 100%;
+    max-width: 500px;
+    animation: slideUp 0.3s ease;
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+  .modal-close {
+    width: 32px; height: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 0.83rem; font-weight: 500; color: var(--muted); margin-bottom: 7px; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.93rem;
+    outline: none;
+    transition: border 0.2s;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+  .form-select { appearance: none; cursor: pointer; }
+  .form-textarea { resize: vertical; min-height: 80px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .btn-submit {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 13px;
+    border-radius: 10px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .btn-submit:hover { background: #9585ff; transform: translateY(-1px); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 24px;
+    background: var(--success);
+    color: #0a0a0f;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* PAGE BUILDER */
+  .page-section {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .page-builder-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .page-builder-info { flex: 1; min-width: 200px; }
+  .page-builder-info h3 { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+  .page-builder-info p { color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+  .btn-preview {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-preview:hover { background: var(--accent); color: #fff; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .stat-num { font-size: 1.4rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 1.8rem; }
+  }
+
+  /* PUBLIC PAGE PREVIEW */
+  .preview-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #f5f5f5;
+    z-index: 300;
+    overflow-y: auto;
+  }
+  .preview-overlay.open { display: block; }
+  .preview-header {
+    background: #fff;
+    border-bottom: 2px solid #eee;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .preview-title { font-family: 'Syne', sans-serif; font-weight: 700; color: #111; font-size: 1.1rem; }
+  .preview-close {
+    background: #111;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  .preview-body { max-width: 680px; margin: 0 auto; padding: 32px 20px; }
+  .preview-profile {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .preview-avatar {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--shopee-orange));
+    margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+  }
+  .preview-name { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: #111; margin-bottom: 6px; }
+  .preview-bio { color: #666; font-size: 0.93rem; }
+  .preview-link-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    text-decoration: none;
+    color: #111;
+    transition: transform 0.15s, box-shadow 0.15s;
+    border-left: 4px solid #ccc;
+  }
+  .preview-link-item:hover { transform: translateX(4px); box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
+  .preview-link-item.ml-item { border-left-color: #ffe000; }
+  .preview-link-item.sh-item { border-left-color: #ee4d2d; }
+  .preview-link-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .preview-link-info { flex: 1; overflow: hidden; }
+  .preview-link-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 2px; }
+  .preview-link-platform { font-size: 0.78rem; color: #888; }
+  .preview-link-arrow { color: #aaa; font-size: 1.2rem; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">⚡ AfiliadosHub</div>
+  <div class="header-actions">
+    <button class="btn-add" onclick="openModal()">
+      <span>+</span> Novo Link
+    </button>
+  </div>
+</header>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Link copiado!</div>
+
+<!-- MAIN -->
+<main>
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Seus links de afiliado<br><span>organizados & prontos</span></h1>
+    <p>Gerencie todos os seus links do Mercado Livre e Shopee em um só lugar. Copie, compartilhe e acompanhe tudo.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat-card stat-ml">
+      <span class="stat-num" id="count-ml">0</span>
+      <div class="stat-label">🛒 Mercado Livre</div>
+    </div>
+    <div class="stat-card stat-sh">
+      <span class="stat-num" id="count-sh">0</span>
+      <div class="stat-label">🛍️ Shopee</div>
+    </div>
+    <div class="stat-card stat-all">
+      <span class="stat-num" id="count-all">0</span>
+      <div class="stat-label">📦 Total de Links</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab tab-all active" onclick="setTab('all', this)">🔗 Todos</button>
+    <button class="tab tab-ml" onclick="setTab('ml', this)">🛒 Mercado Livre</button>
+    <button class="tab tab-sh" onclick="setTab('sh', this)">🛍️ Shopee</button>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-bar">
+    <input type="text" class="search-input" placeholder="🔍  Buscar produto ou categoria..." oninput="renderLinks()" id="search-input">
+  </div>
+
+  <!-- LINKS GRID -->
+  <div class="links-grid" id="links-grid"></div>
+
+  <!-- PAGE SECTION -->
+  <div class="page-section">
+    <div class="section-title">🌐 Página Pública</div>
+    <div class="page-builder-card">
+      <div class="preview-profile" style="text-align:left; flex:1; min-width:200px;">
+        <h3 style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:6px;">Compartilhe todos de uma vez</h3>
+        <p style="color:var(--muted);font-size:0.88rem;line-height:1.5;">Gere uma página estilo "link in bio" com todos os seus links de afiliado organizados. Perfeito para Instagram, TikTok e WhatsApp.</p>
+      </div>
+      <button class="btn-preview" onclick="openPreview()">👁️ Ver Página Pública</button>
+    </div>
+  </div>
+</main>
+
+<!-- MODAL: ADD LINK -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">✨ Adicionar Link</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Plataforma</label>
+      <select class="form-select" id="f-platform">
+        <option value="ml">🛒 Mercado Livre</option>
+        <option value="sh">🛍️ Shopee</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Nome do Produto *</label>
+      <input type="text" class="form-input" id="f-title" placeholder="Ex: Fone Bluetooth JBL Tune 510BT">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Link de Afiliado *</label>
+      <input type="url" class="form-input" id="f-url" placeholder="https://mercadolivre.com.br/...">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Categoria</label>
+        <input type="text" class="form-input" id="f-category" placeholder="Eletrônicos">
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Preço (R$)</label>
+        <input type="text" class="form-input" id="f-price" placeholder="199,90">
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-top:16px">
+      <label class="form-label">Emoji do Produto</label>
+      <input type="text" class="form-input" id="f-emoji" placeholder="🎧" maxlength="5">
+    </div>
+
+    <button class="btn-submit" onclick="addLink()">Salvar Link →</button>
+  </div>
+</div>
+
+<!-- PREVIEW: PUBLIC PAGE -->
+<div class="preview-overlay" id="preview-overlay">
+  <div class="preview-header">
+    <div class="preview-title">👁️ Prévia da Página Pública</div>
+    <button class="preview-close" onclick="closePreview()">✕ Fechar</button>
+  </div>
+  <div class="preview-body">
+    <div class="preview-profile">
+      <div class="preview-avatar">⚡</div>
+      <div class="preview-name">Meus Afiliados</div>
+      <div class="preview-bio">Os melhores produtos com os melhores preços 🔥</div>
+    </div>
+    <div id="preview-links"></div>
+  </div>
+</div>
+
+<script>
+  // ─── STATE ───────────────────────────────────────
+  let links = JSON.parse(localStorage.getItem('afiliados_links') || '[]');
+  let currentTab = 'all';
+
+  // Demo data if empty
+  if (links.length === 0) {
+    links = [
+      { id: 1, platform: 'ml', title: 'Fone Bluetooth JBL Tune 510BT', url: 'https://mercadolivre.com.br/afiliado/exemplo1', category: 'Eletrônicos', price: '199,90', emoji: '🎧' },
+      { id: 2, platform: 'sh', title: 'Kit Maquiagem Completo 12 itens', url: 'https://shopee.com.br/afiliado/exemplo2', category: 'Beleza', price: '89,90', emoji: '💄' },
+      { id: 3, platform: 'ml', title: 'Tênis Nike Air Max 270', url: 'https://mercadolivre.com.br/afiliado/exemplo3', category: 'Moda', price: '349,99', emoji: '👟' },
+      { id: 4, platform: 'sh', title: 'Luminária LED Gamer RGB', url: 'https://shopee.com.br/afiliado/exemplo4', category: 'Casa', price: '45,00', emoji: '💡' },
+      { id: 5, platform: 'ml', title: 'Smartwatch Xiaomi Band 8', url: 'https://mercadolivre.com.br/afiliado/exemplo5', category: 'Eletrônicos', price: '279,00', emoji: '⌚' },
+      { id: 6, platform: 'sh', title: 'Mochila Impermeável 30L', url: 'https://shopee.com.br/afiliado/exemplo6', category: 'Acessórios', price: '129,90', emoji: '🎒' },
+    ];
+    saveLinks();
+  }
+
+  function saveLinks() {
+    localStorage.setItem('afiliados_links', JSON.stringify(links));
+  }
+
+  // ─── RENDER ──────────────────────────────────────
+  function renderLinks() {
+    const grid = document.getElementById('links-grid');
+    const query = document.getElementById('search-input').value.toLowerCase();
+
+    let filtered = links.filter(l => {
+      const matchTab = currentTab === 'all' || l.platform === currentTab;
+      const matchSearch = !query || l.title.toLowerCase().includes(query) || (l.category||'').toLowerCase().includes(query);
+      return matchTab && matchSearch;
+    });
+
+    updateStats();
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">🔗</div>
+          <strong>Nenhum link encontrado</strong>
+          <p>Clique em "+ Novo Link" para adicionar seu primeiro link de afiliado.</p>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(link => {
+      const isMl = link.platform === 'ml';
+      const platformLabel = isMl ? '🛒 Mercado Livre' : '🛍️ Shopee';
+      const badgeClass = isMl ? 'badge-ml' : 'badge-sh';
+      const cardClass = isMl ? 'ml' : 'sh';
+      const copyClass = isMl ? 'ml-copy' : 'sh-copy';
+      const shortUrl = link.url.replace('https://', '').substring(0, 42) + '…';
+      const emoji = link.emoji || (isMl ? '🛒' : '🛍️');
+
+      return `
+        <div class="link-card ${cardClass}" id="card-${link.id}">
+          <div class="card-body">
+            <div class="card-top">
+              <span class="platform-badge ${badgeClass}">${platformLabel}</span>
+              <div class="card-actions">
+                <button class="btn-icon" onclick="editLink(${link.id})" title="Editar">✏️</button>
+                <button class="btn-icon delete" onclick="deleteLink(${link.id})" title="Deletar">🗑️</button>
+              </div>
+            </div>
+            <div class="card-title">${emoji} ${link.title}</div>
+            <div class="card-url" onclick="copyLink('${link.url}', this)" title="Clique para copiar">${shortUrl}</div>
+            <div class="card-footer">
+              <div class="card-tags">
+                ${link.category ? `<span class="tag">${link.category}</span>` : ''}
+                ${link.price ? `<span class="tag">R$ ${link.price}</span>` : ''}
+              </div>
+              <button class="btn-copy ${copyClass}" onclick="copyLink('${link.url}', this)">
+                📋 Copiar
+              </button>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function updateStats() {
+    document.getElementById('count-ml').textContent = links.filter(l => l.platform === 'ml').length;
+    document.getElementById('count-sh').textContent = links.filter(l => l.platform === 'sh').length;
+    document.getElementById('count-all').textContent = links.length;
+  }
+
+  // ─── TABS ─────────────────────────────────────────
+  function setTab(tab, btn) {
+    currentTab = tab;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderLinks();
+  }
+
+  // ─── MODAL ────────────────────────────────────────
+  let editingId = null;
+
+  function openModal(id = null) {
+    editingId = id;
+    if (id) {
+      const link = links.find(l => l.id === id);
+      document.getElementById('f-platform').value = link.platform;
+      document.getElementById('f-title').value = link.title;
+      document.getElementById('f-url').value = link.url;
+      document.getElementById('f-category').value = link.category || '';
+      document.getElementById('f-price').value = link.price || '';
+      document.getElementById('f-emoji').value = link.emoji || '';
+      document.querySelector('.modal-title').textContent = '✏️ Editar Link';
+    } else {
+      document.getElementById('f-platform').value = 'ml';
+      document.getElementById('f-title').value = '';
+      document.getElementById('f-url').value = '';
+      document.getElementById('f-category').value = '';
+      document.getElementById('f-price').value = '';
+      document.getElementById('f-emoji').value = '';
+      document.querySelector('.modal-title').textContent = '✨ Adicionar Link';
+    }
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    editingId = null;
+  }
+
+  function addLink() {
+    const title = document.getElementById('f-title').value.trim();
+    const url = document.getElementById('f-url').value.trim();
+    if (!title || !url) { alert('Preencha o nome e o link!'); return; }
+
+    const data = {
+      id: editingId || Date.now(),
+      platform: document.getElementById('f-platform').value,
+      title,
+      url,
+      category: document.getElementById('f-category').value.trim(),
+      price: document.getElementById('f-price').value.trim(),
+      emoji: document.getElementById('f-emoji').value.trim(),
+    };
+
+    if (editingId) {
+      const idx = links.findIndex(l => l.id === editingId);
+      links[idx] = data;
+    } else {
+      links.push(data);
+    }
+
+    saveLinks();
+    renderLinks();
+    closeModal();
+    showToast(editingId ? 'Link atualizado!' : 'Link adicionado!');
+  }
+
+  function editLink(id) { openModal(id); }
+
+  function deleteLink(id) {
+    if (!confirm('Remover este link?')) return;
+    links = links.filter(l => l.id !== id);
+    saveLinks();
+    renderLinks();
+    showToast('Link removido!');
+  }
+
+  // ─── COPY ─────────────────────────────────────────
+  function copyLink(url, btn) {
+    navigator.clipboard.writeText(url).then(() => {
+      const original = btn.innerHTML;
+      if (btn.tagName === 'BUTTON') {
+        btn.innerHTML = '✓ Copiado!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.innerHTML = original; btn.classList.remove('copied'); }, 1500);
+      }
+      showToast('Link copiado para a área de transferência!');
+    });
+  }
+
+  // ─── TOAST ────────────────────────────────────────
+  let toastTimer;
+  function showToast(msg = 'Link copiado!') {
+    const toast = document.getElementById('toast');
+    toast.textContent = '✓ ' + msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // ─── PREVIEW ─────────────────────────────────────
+  function openPreview() {
+    const container = document.getElementById('preview-links');
+    if (links.length === 0) {
+      container.innerHTML = '<p style="text-align:center;color:#888;padding:40px 0">Nenhum link adicionado ainda.</p>';
+    } else {
+      container.innerHTML = links.map(l => {
+        const isMl = l.platform === 'ml';
+        const emoji = l.emoji || (isMl ? '🛒' : '🛍️');
+        const platform = isMl ? '🛒 Mercado Livre' : '🛍️ Shopee';
+        const cls = isMl ? 'ml-item' : 'sh-item';
+        return `
+          <a href="${l.url}" target="_blank" class="preview-link-item ${cls}" style="text-decoration:none">
+            <div class="preview-link-icon">${emoji}</div>
+            <div class="preview-link-info">
+              <div class="preview-link-name">${l.title}</div>
+              <div class="preview-link-platform">${platform}${l.price ? ' · R$ ' + l.price : ''}</div>
+            </div>
+            <span class="preview-link-arrow">›</span>
+          </a>`;
+      }).join('');
+    }
+    document.getElementById('preview-overlay').classList.add('open');
+  }
+
+  function closePreview() {
+    document.getElementById('preview-overlay').classList.remove('open');
+  }
+
+  // Close modal on overlay click
+  document.getElementById('modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // Init
+  renderLinks();
+</script>
+</body>
+</html>
